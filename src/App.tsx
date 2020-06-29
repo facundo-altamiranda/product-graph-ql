@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FunctionComponent, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/react-hooks';
 
-function App() {
+import { apolloClient } from 'api';
+import { ProductList, ProductItem } from 'pages';
+import { AppContext } from 'context';
+import { Product } from 'interfaces';
+import { Header } from 'components';
+
+const App: FunctionComponent = () => {
+  const [productItem, setProductItem] = useState<Product | undefined>();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={apolloClient}>
+      <AppContext.Provider value={{ productItem, setProductItem }}>
+        <Router>
+          <Header />
+          <Switch>
+            <Route path="/product">
+              <ProductItem />
+            </Route>
+            <Route path="/">
+              <ProductList />
+            </Route>
+          </Switch>
+        </Router>
+      </AppContext.Provider>
+    </ApolloProvider>
   );
-}
+};
 
 export default App;
